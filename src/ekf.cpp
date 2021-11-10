@@ -261,7 +261,7 @@ void EKF::measurement_update_3DoF()
 	Eigen::MatrixXd K(X_.size(),X_.size());
 	K = P_*H.transpose()*S.inverse();
 
-	X_ += 2.5*K*Y;
+	X_ += 2.0*K*Y;
 	P_ = (I - K*H)*P_;
 }
 

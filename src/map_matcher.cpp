@@ -34,6 +34,7 @@ MapMatcher::MapMatcher() :
 	pc_sub_ = nh_.subscribe(pc_topic_name_,10,&MapMatcher::pc_callback,this);
 	//orb_pc_sub_ = nh_.subscribe(orb_pc_topic_name_,1,&MapMatcher::orb_pc_callback,this);
 	ekf_pose_sub_ = nh_.subscribe(ekf_pose_topic_name_,10,&MapMatcher::ekf_pose_callback,this);
+	//map_sub_ = nh_.subscribe("map",10,&MapMatcher::map_callback,this);
 
 	ndt_pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>(ndt_pose_topic_name_,20);
 	map_pub_ = nh_.advertise<sensor_msgs::PointCloud2>(map_topic_name_,10);
@@ -94,6 +95,13 @@ void MapMatcher::ekf_pose_callback(const geometry_msgs::PoseStampedConstPtr& msg
 	ekf_pose_ = *msg;
 	has_received_ekf_pose_ = true;
 }
+
+/*
+void MapMatcher::map_callback(const sensor_msgs::PointCloud2ConstPtr& msg)
+{
+
+}
+*/
 
 void MapMatcher::init_map() { map_pcl_->clear(); }
 
