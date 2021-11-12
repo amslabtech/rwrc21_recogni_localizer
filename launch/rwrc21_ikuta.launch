@@ -44,7 +44,7 @@
 	</node>
 	
 	<!-- tf -->
-	<node pkg="rwrc21_recogni_localizer" type="tf_broadcaster_node" name="tf_broadcaster_node" >
+	<!-- <node pkg="rwrc21_recogni_localizer" type="tf_broadcaster_node" name="tf_broadcaster_node" >
 		<param name="is_odom_tf" value="true" />
 		<param name="odom_topic_name" value="$(arg odom_topic_name)" />
 		<param name="odom_frame_id" value="$(arg odom_frame_id)" />
@@ -52,7 +52,7 @@
 		<param name="camera_frame_id" value="$(arg camera_frame_id)" />
 		<param name="velodyne_frame_id" value="$(arg velodyne_frame_id)" />
 		<rosparam command="load" file="$(find rwrc21_recogni_localizer)/config/tf/dkan.yaml" />
-	</node>
+	</node> -->
 
 	<!-- rviz -->
 	<!-- <node pkg="rviz" type="rviz" name="rviz" args="-d $(find scan_matching)/config/rviz/dkan.rviz" />	 -->
