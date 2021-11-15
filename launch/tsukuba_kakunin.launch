@@ -32,7 +32,7 @@
 
 	<!-- map_matcher -->
 	<node pkg="rwrc21_recogni_localizer" type="map_matcher_node" name="map_matcher_node" output="screen" >
-		<param name="pcd_file_path" value="/home/amsl/pcd/tsukuba/kakunin_infant.pcd" />
+		<param name="pcd_file_path" value="/home/amsl/pcd/tsukuba/tsukuba_test.pcd" />
 		<param name="pc_topic_name" value="$(arg velodyne_topic_name)" />
 		<param name="orb_pc_topic_name" value="" />
 		<param name="ekf_pose_topic_name" value="$(arg ekf_pose_topic_name)" />
@@ -43,7 +43,7 @@
 		<param name="is_pcl_offset" value="false" />
 		<rosparam command="load" file="$(find rwrc21_recogni_localizer)/config/map_matcher/kakunin2.yaml" />
 	</node>
-	
+
 	<!-- tf -->
 	<!--<node pkg="rwrc21_recogni_localizer" type="tf_broadcaster_node" name="tf_broadcaster_node" >
 		<param name="is_odom_tf" value="true" />

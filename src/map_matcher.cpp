@@ -15,6 +15,7 @@ MapMatcher::MapMatcher() :
 	private_nh_.param("map_topic_name",map_topic_name_,{"map_out"});
 	private_nh_.param("ndt_pc_topic_name",ndt_pc_topic_name_,{"ndt_pc_out"});
 	private_nh_.param("map_frame_id",map_frame_id_,{"map"});
+	private_nh_.param("is_publish_map",is_publish_map_,{true});
 	private_nh_.param("is_pcl_offset",is_pcl_offset_,{false});
 
 	private_nh_.param("VOXEL_SIZE",VOXEL_SIZE_,{0.3});
@@ -150,12 +151,14 @@ void MapMatcher::read_map()
 	pcl::transformPointCloud(*map_pcl_,*map_pcl_,offset_position,offset_orientation);
 
 	// publish map
-	sensor_msgs::PointCloud2 map;
-	pcl::toROSMsg(*map_pcl_,map);
-	//map.header.stamp = ros::Time(0);
-	map.header.frame_id = map_frame_id_;
-	map_pub_.publish(map);
-
+	if(is_publish_map_){
+		sensor_msgs::PointCloud2 map;
+		pcl::toROSMsg(*map_pcl_,map);
+		//map.header.stamp = ros::Time(0);
+		map.header.frame_id = map_frame_id_;
+		map_pub_.publish(map);
+	}
+	
 	has_read_map_ = true;
 }
 

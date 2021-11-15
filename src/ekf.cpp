@@ -1,10 +1,10 @@
 #include "ekf/ekf.h"
 
-EKF::EKF() : 
+EKF::EKF() :
 	private_nh_("~"),
 	has_received_odom_(false), has_received_imu_(false), has_received_ndt_pose_(false),
 	is_first_(true)
-{	
+{
 	private_nh_.param("ndt_pose_topic_name",ndt_pose_topic_name_,{"/ndt_pose_in"});
 	private_nh_.param("imu_topic_name",imu_topic_name_,{"/imu_in"});
 	private_nh_.param("ekf_pose_topic_name",ekf_pose_topic_name_,{"/ekf_out"});
@@ -42,9 +42,9 @@ EKF::EKF() :
 	initialize(INIT_X_,INIT_Y_,INIT_Z_,INIT_ROLL_,INIT_PITCH_,INIT_YAW_);
 }
 
-EKF::~EKF() 
-{ 
-	//delete kalman_filter; 
+EKF::~EKF()
+{
+	//delete kalman_filter;
 }
 
 void EKF::ndt_pose_callback(const geometry_msgs::PoseStampedConstPtr& msg)
@@ -84,7 +84,7 @@ void EKF::initialize(double x,double y,double z,double roll,double pitch,double 
 {
 	if(is_3DoF_) STATE_SIZE_ = 3;
 	else STATE_SIZE_ = 6;
-	
+
 	X_.setZero(STATE_SIZE_);
 	P_.setZero(STATE_SIZE_,STATE_SIZE_);
 	P_ = INIT_SIGMA_*Eigen::MatrixXd::Identity(STATE_SIZE_,STATE_SIZE_);
@@ -113,7 +113,7 @@ void EKF::set_pose(double x,double y,double z,double roll,double pitch,double ya
 		X_(4) = pitch;
 		X_(5) = yaw;
 	}
-}	
+}
 
 void EKF::calc_rpy_from_quat(geometry_msgs::Quaternion q,double& roll,double& pitch,double& yaw)
 {
@@ -124,7 +124,7 @@ void EKF::calc_rpy_from_quat(geometry_msgs::Quaternion q,double& roll,double& pi
 void EKF::motion_update_3DoF(double dt)
 {
 	double nu = odom_.twist.twist.linear.x;
-	double omega = imu_.angular_velocity.z;
+	double omega = -imu_.angular_velocity.z;
 
 	// M
 	Eigen::MatrixXd M(X_.size() - 1,X_.size() - 1);
@@ -173,7 +173,7 @@ void EKF::motion_update_6DoF(double dt)
 	double delta_yaw = imu_.angular_velocity.z*dt;
 	double delta_roll = imu_.angular_velocity.x*dt;
 	double delta_pitch = imu_.angular_velocity.y*dt;
-	
+
 	Eigen::Vector3d delta_position = { odom_.twist.twist.linear.x*dt, 0.0, 0.0 };
 	Eigen::Vector3d delta_rotation = { delta_roll, delta_pitch, delta_yaw };
 	Eigen::Matrix3d rotation_rpy;
@@ -238,7 +238,7 @@ void EKF::measurement_update_3DoF()
 
 	// H
 	Eigen::MatrixXd H = Eigen::MatrixXd::Identity(X_.size(),X_.size());
-	
+
 	// I
 	Eigen::MatrixXd I = Eigen::MatrixXd::Identity(X_.size(),X_.size());
 
@@ -278,19 +278,19 @@ void EKF::measurement_update_6DoF()
 
 	// H
 	Eigen::MatrixXd H = Eigen::MatrixXd::Identity(X_.size(),X_.size());
-	
+
 	// I
 	Eigen::MatrixXd I = Eigen::MatrixXd::Identity(X_.size(),X_.size());
-	
+
 	// Y
 	Eigen::VectorXd Y = Z - measurement_function(X_,H);
-	
+
 	// R
 	Eigen::MatrixXd R = SIGMA_NDT_*Eigen::MatrixXd::Identity(X_.size(),X_.size());
-	
+
 	// S
 	Eigen::MatrixXd S = H*P_*H.transpose() + R;
-	
+
 	// K
 	Eigen::MatrixXd K = P_*H.transpose()*S.inverse();
 
@@ -366,13 +366,13 @@ void EKF::publish_tf()
 		geometry_msgs::TransformStamped tmp_tf_stamped;
 		tmp_tf_stamped.header.stamp = odom_.header.stamp;
 		tmp_tf_stamped.header.frame_id = map_frame_id_;
-		tmp_tf_stamped.child_frame_id = odom_frame_id_; 
+		tmp_tf_stamped.child_frame_id = odom_frame_id_;
 		tf2::convert(latest_tf.inverse(),tmp_tf_stamped.transform);
 		broadcaster_->sendTransform(tmp_tf_stamped);
 	}
 	catch(tf2::TransformException& ex){
 		ROS_WARN("%s", ex.what());
-		return;		
+		return;
 	}
 
 }

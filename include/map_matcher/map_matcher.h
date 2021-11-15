@@ -80,6 +80,7 @@ private:
 	bool has_received_pc_;
 	bool has_read_map_;
 	bool is_first;
+	bool is_publish_map_;
 
 	// parameter
 	std::string pcd_file_path_;
