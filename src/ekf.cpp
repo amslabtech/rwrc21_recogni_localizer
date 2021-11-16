@@ -126,6 +126,8 @@ void EKF::motion_update_3DoF(double dt)
 	double nu = odom_.twist.twist.linear.x;
 	double omega = imu_.angular_velocity.z;
 
+	if(omega < 1e-3) omega = 0.0;
+
 	// M
 	Eigen::MatrixXd M(X_.size() - 1,X_.size() - 1);
 	M.setZero();
@@ -173,6 +175,10 @@ void EKF::motion_update_6DoF(double dt)
 	double delta_yaw = imu_.angular_velocity.z*dt;
 	double delta_roll = imu_.angular_velocity.x*dt;
 	double delta_pitch = imu_.angular_velocity.y*dt;
+
+	if(delta_yaw < 1e-3) delta_yaw = 0.0;
+	if(delta_roll < 1e-3) delta_roll = 0.0;
+	if(delta_pitch < 1e-3) delta_pitch = 0.0;
 
 	Eigen::Vector3d delta_position = { odom_.twist.twist.linear.x*dt, 0.0, 0.0 };
 	Eigen::Vector3d delta_rotation = { delta_roll, delta_pitch, delta_yaw };
