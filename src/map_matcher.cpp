@@ -4,7 +4,7 @@ MapMatcher::MapMatcher() :
 	private_nh_("~"),
 	map_pcl_(new pcl::PointCloud<pcl::PointXYZI>),
 	current_pcl_(new pcl::PointCloud<pcl::PointXYZI>),
-	is_reset_(true), is_first(true),
+	is_reset_(true),
 	has_received_ekf_pose_(false), has_received_pc_(false), has_read_map_(false)
 {
 	private_nh_.param("pcd_file_path",pcd_file_path_,{"/home/amsl/pcd/ikuta/ikuta_outdoor.pcd"});
@@ -15,7 +15,7 @@ MapMatcher::MapMatcher() :
 	private_nh_.param("map_topic_name",map_topic_name_,{"map_out"});
 	private_nh_.param("ndt_pc_topic_name",ndt_pc_topic_name_,{"ndt_pc_out"});
 	private_nh_.param("map_frame_id",map_frame_id_,{"map"});
-	private_nh_.param("is_publish_map",is_publish_map_,{true});
+	private_nh_.param("is_publish_map",is_publish_map_,{false});
 	private_nh_.param("is_pcl_offset",is_pcl_offset_,{false});
 
 	private_nh_.param("VOXEL_SIZE",VOXEL_SIZE_,{0.3});
@@ -74,12 +74,6 @@ void MapMatcher::pc_callback(const sensor_msgs::PointCloud2ConstPtr& msg)
 		Eigen::Matrix4f transform = tf2::transformToEigen(transform_stamped.transform).matrix().cast<float>();
 		pcl::transformPointCloud(*current_pcl_,*current_pcl_,transform);
 	}
-
-	sensor_msgs::PointCloud2 map;
-	pcl::toROSMsg(*map_pcl_,map);
-	//map.header.stamp = ros::Time(0);
-	map.header.frame_id = map_frame_id_;
-	map_pub_.publish(map);
 
 	has_received_pc_ = true;
 }
@@ -158,7 +152,7 @@ void MapMatcher::read_map()
 		map.header.frame_id = map_frame_id_;
 		map_pub_.publish(map);
 	}
-	
+
 	has_read_map_ = true;
 }
 
@@ -300,7 +294,7 @@ Eigen::Quaternionf MapMatcher::msg_to_quat_eigen(geometry_msgs::Quaternion q)
 void MapMatcher::process()
 {
 	read_map();
-	ros::Rate rate(20);
+	ros::Rate rate(20.0);
 	while(ros::ok()){
 		if(has_read_map_ && has_received_ekf_pose_ && has_received_pc_){
 			matching(map_pcl_,current_pcl_);

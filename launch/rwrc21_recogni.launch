@@ -21,6 +21,7 @@
     <!-- tsukuba_full -->
     <group if="$(arg is_tsukuba_full)" >
         <include file="$(find amsl_navigation_managers)/launch/rwrc21_tsukuba_recogni_manager.launch"/>
+        <include file="$(find rwrc21_recogni_localizer)/launch/rwrc21_tsukuba.launch" />
     </group>
 
     <!-- tsukuba_kakunin -->

@@ -13,7 +13,7 @@ EKF::EKF() :
 	private_nh_.param("base_link_frame_id",base_link_frame_id_,{"base_link"});
 	private_nh_.param("odom_topic_name",odom_topic_name_,{"odom"});
 	private_nh_.param("is_3DoF",is_3DoF_,{true});
-	private_nh_.param("is_odom_tf",is_odom_tf_,{true});
+	private_nh_.param("is_odom_tf",is_odom_tf_,{false});
 
 	private_nh_.param("INIT_X",INIT_X_,{0.0});
 	private_nh_.param("INIT_Y",INIT_Y_,{0.0});
@@ -126,7 +126,7 @@ void EKF::motion_update_3DoF(double dt)
 	double nu = odom_.twist.twist.linear.x;
 	double omega = imu_.angular_velocity.z;
 
-	if(omega < 1e-3) omega = 0.0;
+	//if(omega < 1e-3) omega = 0.0;
 
 	// M
 	Eigen::MatrixXd M(X_.size() - 1,X_.size() - 1);
