@@ -1,10 +1,10 @@
 # Init pose
-INIT_X: 0.0
+INIT_X: -6.5
 INIT_Y: 0.0
 INIT_Z: 0.0
 INIT_ROLL: 0.0
 INIT_PITCH: 0.0
-INIT_YAW: 2.6
+INIT_YAW: 3.00
 
 # Parameters
 INIT_SIGMA: 0.0001
