@@ -215,8 +215,8 @@ void MapMatcher::matching(pcl::PointCloud<pcl::PointXYZI>::Ptr map_pcl,pcl::Poin
 		geometry_msgs::PoseStamped ndt_pose;
 		ndt_pose.pose.position.x = translation(0,3);
 		ndt_pose.pose.position.y = translation(1,3);
-		//ndt_pose.pose.position.z = translation(2,3);
-		ndt_pose.pose.position.z = 0.0;
+		ndt_pose.pose.position.z = translation(2,3);
+		//ndt_pose.pose.position.z = 0.0;
 		ndt_pose.pose.orientation = quat_eigen_to_msg(quaternion);
 		ndt_pose.header.stamp = ekf_pose_.header.stamp;
 		ndt_pose.header.frame_id = ekf_pose_.header.frame_id;
