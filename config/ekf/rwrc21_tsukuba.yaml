@@ -1,4 +1,4 @@
-# Init pose
+# Init pose (x = -6.5, y = 0.0)
 INIT_X: -6.5
 INIT_Y: 0.0
 INIT_Z: 0.0
@@ -6,10 +6,10 @@ INIT_ROLL: 0.0
 INIT_PITCH: 0.0
 INIT_YAW: 3.00
 
-# Parameters
-INIT_SIGMA: 0.0001
+# Parameters (0.001 < imu < ?, 0.03 < odom < ?)
+INIT_SIGMA: 0.000001
 SIGMA_IMU: 0.001
-SIGMA_ODOM: 0.01
+SIGMA_ODOM: 0.007
 SIGMA_NDT: 0.001
 
 #MOTION_NOISE_NN: 0.01
