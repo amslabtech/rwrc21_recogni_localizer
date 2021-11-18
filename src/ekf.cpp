@@ -334,8 +334,8 @@ void EKF::respawn()
 {
 	ekf_pose_.pose.position.x = respawn_pose_.pose.position.x;
 	ekf_pose_.pose.position.y = respawn_pose_.pose.position.y;
-	ekf_pose_.pose.position.z = respawn_pose_.pose.position.z;
-	ekf_pose_.pose.orientation = respawn_pose_.pose.orientation;
+	ekf_pose_.pose.position.z = ndt_pose_.pose.position.z;
+	ekf_pose_.pose.orientation = ndt_pose_.pose.orientation;
 	ekf_pose_.header.frame_id = map_frame_id_;
 	ekf_pose_pub_.publish(ekf_pose_);
 }
@@ -474,16 +474,15 @@ void EKF::process()
 			}
 			else dt = now_time_.toSec() - last_time_.toSec();
 			
-			/*
+		
 			if(is_respawn_){
 				respawn();
 				is_respawn_ = false;
 			}
-			*/		
-
+			
 			motion_update(dt);
-			if(has_received_ndt_pose_) measurement_update();
-			//if(has_received_ndt_pose_ && is_measurement_) measurement_update();
+			//if(has_received_ndt_pose_) measurement_update();
+			if(has_received_ndt_pose_ && is_measurement_.data) measurement_update();
 			publish_ekf_pose();
 			publish_tf();
 			has_received_ndt_pose_ = false;
