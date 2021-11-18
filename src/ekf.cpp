@@ -15,8 +15,8 @@ EKF::EKF() :
 	private_nh_.param("is_3DoF",is_3DoF_,{true});
 	private_nh_.param("is_odom_tf",is_odom_tf_,{false});
 
-	private_nh_.param("measurement_topic_name",measurement_topic_name_,{"/task/measurement_update"});
-	private_nh_.param("respawn",respawn_pose_topic_name_,{"/respawn"});
+	//private_nh_.param("measurement_topic_name",measurement_topic_name_,{"/task/measurement_update"});
+	private_nh_.param("respawn_pose_topic_name",respawn_pose_topic_name_,{"/position/respawn"});
 
 	private_nh_.param("INIT_X",INIT_X_,{0.0});
 	private_nh_.param("INIT_Y",INIT_Y_,{0.0});
@@ -38,7 +38,7 @@ EKF::EKF() :
 	odom_sub_ = nh_.subscribe(odom_topic_name_,10,&EKF::odom_callback,this);
 	ekf_pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>(ekf_pose_topic_name_,10);
 
-	measurement_sub_ = nh_.subscribe(measurement_topic_name_,10,&EKF::measurement_callback,this);
+	//measurement_sub_ = nh_.subscribe(measurement_topic_name_,10,&EKF::measurement_callback,this);
 	respawn_pose_sub_ = nh_.subscribe(respawn_pose_topic_name_,10,&EKF::respawn_pose_callback,this);
 
 	broadcaster_.reset(new tf2_ros::TransformBroadcaster);
@@ -337,6 +337,8 @@ void EKF::respawn()
 	ekf_pose_.pose.position.z = ndt_pose_.pose.position.z;
 	ekf_pose_.pose.orientation = ndt_pose_.pose.orientation;
 	ekf_pose_.header.frame_id = map_frame_id_;
+	X_(0) = respawn_pose_.pose.position.x;
+	X_(1) = respawn_pose_.pose.position.y;
 	ekf_pose_pub_.publish(ekf_pose_);
 }
 
@@ -349,6 +351,7 @@ void EKF::publish_ekf_pose()
 		ekf_pose_.pose.position.z = ndt_pose_.pose.position.z;
 		//ekf_pose_.pose.position.z = 0.0;
 		ekf_pose_.pose.orientation = rpy_to_msg(0.0,0.0,X_(2));
+
 
 		std::cout << "EKF POSE: " << std::endl;
 		std::cout << "  X   : " << X_(0) << std::endl;
