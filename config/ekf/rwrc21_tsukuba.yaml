@@ -1,5 +1,5 @@
 # Init pose (x = -6.5, y = 0.0)
-INIT_X: -6.5
+INIT_X: -3.5
 INIT_Y: 0.0
 INIT_Z: 0.0
 INIT_ROLL: 0.0

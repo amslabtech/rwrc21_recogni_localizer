@@ -285,7 +285,7 @@ void EKF::measurement_update_3DoF()
 	Eigen::MatrixXd K(X_.size(),X_.size());
 	K = P_*H.transpose()*S.inverse();
 
-	X_ += 2.0*K*Y;
+	X_ += 1.0*K*Y;
 	P_ = (I - K*H)*P_;
 }
 
@@ -474,17 +474,18 @@ void EKF::process()
 			}
 			else dt = now_time_.toSec() - last_time_.toSec();
 			
-		
+			
 			if(is_respawn_){
 				respawn();
 				is_respawn_ = false;
 			}
-			
-			motion_update(dt);
-			//if(has_received_ndt_pose_) measurement_update();
-			if(has_received_ndt_pose_ && is_measurement_.data) measurement_update();
-			publish_ekf_pose();
-			publish_tf();
+			else{
+				motion_update(dt);
+				if(has_received_ndt_pose_) measurement_update();
+				//if(has_received_ndt_pose_ && !is_measurement_.data) measurement_update();
+				publish_ekf_pose();
+				publish_tf();
+			}
 			has_received_ndt_pose_ = false;
 		}
 		last_time_ = now_time_;
