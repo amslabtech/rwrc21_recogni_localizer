@@ -1,5 +1,5 @@
 # Downsampling Parameter
-VOXEL_SIZE: 0.5
+VOXEL_SIZE: 0.1
 
 # Paththrough Parameter
 LIMIT_RANGE: 30.0

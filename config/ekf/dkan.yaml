@@ -1,6 +1,6 @@
 # Init pose
 INIT_X: 2.5
-INIT_Y: 0.0
+INIT_Y: 7.0
 INIT_Z: 0.0
 INIT_ROLL: 0.0
 INIT_PITCH: 0.0

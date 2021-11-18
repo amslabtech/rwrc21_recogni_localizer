@@ -4,7 +4,7 @@ MapMatcher::MapMatcher() :
 	private_nh_("~"),
 	map_pcl_(new pcl::PointCloud<pcl::PointXYZI>),
 	current_pcl_(new pcl::PointCloud<pcl::PointXYZI>),
-	is_reset_(true), is_first(true),
+	is_reset_(true),
 	has_received_ekf_pose_(false), has_received_pc_(false), has_read_map_(false)
 {
 	private_nh_.param("pcd_file_path",pcd_file_path_,{"/home/amsl/pcd/ikuta/ikuta_outdoor.pcd"});
@@ -15,6 +15,7 @@ MapMatcher::MapMatcher() :
 	private_nh_.param("map_topic_name",map_topic_name_,{"map_out"});
 	private_nh_.param("ndt_pc_topic_name",ndt_pc_topic_name_,{"ndt_pc_out"});
 	private_nh_.param("map_frame_id",map_frame_id_,{"map"});
+	private_nh_.param("is_publish_map",is_publish_map_,{false});
 	private_nh_.param("is_pcl_offset",is_pcl_offset_,{false});
 
 	private_nh_.param("VOXEL_SIZE",VOXEL_SIZE_,{0.3});
@@ -34,6 +35,7 @@ MapMatcher::MapMatcher() :
 	pc_sub_ = nh_.subscribe(pc_topic_name_,10,&MapMatcher::pc_callback,this);
 	//orb_pc_sub_ = nh_.subscribe(orb_pc_topic_name_,1,&MapMatcher::orb_pc_callback,this);
 	ekf_pose_sub_ = nh_.subscribe(ekf_pose_topic_name_,10,&MapMatcher::ekf_pose_callback,this);
+	//map_sub_ = nh_.subscribe("map",10,&MapMatcher::map_callback,this);
 
 	ndt_pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>(ndt_pose_topic_name_,20);
 	map_pub_ = nh_.advertise<sensor_msgs::PointCloud2>(map_topic_name_,10);
@@ -73,12 +75,6 @@ void MapMatcher::pc_callback(const sensor_msgs::PointCloud2ConstPtr& msg)
 		pcl::transformPointCloud(*current_pcl_,*current_pcl_,transform);
 	}
 
-	sensor_msgs::PointCloud2 map;
-	pcl::toROSMsg(*map_pcl_,map);
-	//map.header.stamp = ros::Time(0);
-	map.header.frame_id = map_frame_id_;
-	map_pub_.publish(map);
-
 	has_received_pc_ = true;
 }
 
@@ -94,6 +90,13 @@ void MapMatcher::ekf_pose_callback(const geometry_msgs::PoseStampedConstPtr& msg
 	ekf_pose_ = *msg;
 	has_received_ekf_pose_ = true;
 }
+
+/*
+void MapMatcher::map_callback(const sensor_msgs::PointCloud2ConstPtr& msg)
+{
+
+}
+*/
 
 void MapMatcher::init_map() { map_pcl_->clear(); }
 
@@ -142,11 +145,13 @@ void MapMatcher::read_map()
 	pcl::transformPointCloud(*map_pcl_,*map_pcl_,offset_position,offset_orientation);
 
 	// publish map
-	sensor_msgs::PointCloud2 map;
-	pcl::toROSMsg(*map_pcl_,map);
-	//map.header.stamp = ros::Time(0);
-	map.header.frame_id = map_frame_id_;
-	map_pub_.publish(map);
+	if(is_publish_map_){
+		sensor_msgs::PointCloud2 map;
+		pcl::toROSMsg(*map_pcl_,map);
+		//map.header.stamp = ros::Time(0);
+		map.header.frame_id = map_frame_id_;
+		map_pub_.publish(map);
+	}
 
 	has_read_map_ = true;
 }
@@ -210,8 +215,8 @@ void MapMatcher::matching(pcl::PointCloud<pcl::PointXYZI>::Ptr map_pcl,pcl::Poin
 		geometry_msgs::PoseStamped ndt_pose;
 		ndt_pose.pose.position.x = translation(0,3);
 		ndt_pose.pose.position.y = translation(1,3);
-		//ndt_pose.pose.position.z = translation(2,3);
-		ndt_pose.pose.position.z = 0.0;
+		ndt_pose.pose.position.z = translation(2,3);
+		//ndt_pose.pose.position.z = 0.0;
 		ndt_pose.pose.orientation = quat_eigen_to_msg(quaternion);
 		ndt_pose.header.stamp = ekf_pose_.header.stamp;
 		ndt_pose.header.frame_id = ekf_pose_.header.frame_id;
@@ -289,7 +294,7 @@ Eigen::Quaternionf MapMatcher::msg_to_quat_eigen(geometry_msgs::Quaternion q)
 void MapMatcher::process()
 {
 	read_map();
-	ros::Rate rate(20);
+	ros::Rate rate(20.0);
 	while(ros::ok()){
 		if(has_read_map_ && has_received_ekf_pose_ && has_received_pc_){
 			matching(map_pcl_,current_pcl_);

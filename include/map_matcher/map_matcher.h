@@ -38,6 +38,8 @@ private:
 	void pc_callback(const sensor_msgs::PointCloud2ConstPtr& msg);
 	void orb_pc_callback(const sensor_msgs::PointCloud2ConstPtr& msg);
 	void ekf_pose_callback(const geometry_msgs::PoseStampedConstPtr& msg);
+	void map_callback(const sensor_msgs::PointCloud2ConstPtr& msg);
+
 
  	void init_map();
 	void read_map();
@@ -59,6 +61,7 @@ private:
 	ros::Subscriber pc_sub_;
 	ros::Subscriber orb_pc_sub_;
 	ros::Subscriber ekf_pose_sub_;
+	ros::Subscriber map_sub_;
 
 	std::shared_ptr<tf2_ros::TransformBroadcaster> broadcaster_;
 	std::shared_ptr<tf2_ros::TransformListener> listener_;
@@ -77,6 +80,7 @@ private:
 	bool has_received_pc_;
 	bool has_read_map_;
 	bool is_first;
+	bool is_publish_map_;
 
 	// parameter
 	std::string pcd_file_path_;

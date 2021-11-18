@@ -32,7 +32,7 @@
 
 	<!-- map_matcher -->
 	<node pkg="rwrc21_recogni_localizer" type="map_matcher_node" name="map_matcher_node" output="screen">
-		<param name="pcd_file_path" value="/home/amsl/pcd/dkan/dkan_1f.pcd" />
+		<param name="pcd_file_path" value="/home/amsl/pcd/dkan/d_kan_indoor.pcd" />
 		<param name="pc_topic_name" value="$(arg velodyne_topic_name)" />
 		<param name="orb_pc_topic_name" value="" />
 		<param name="ekf_pose_topic_name" value="$(arg ekf_pose_topic_name)" />
@@ -43,7 +43,7 @@
 		<param name="is_pcl_offset" value="true" />
 		<rosparam command="load" file="$(find rwrc21_recogni_localizer)/config/map_matcher/dkan.yaml" />
 	</node>
-	
+
 	<!-- tf -->
 	<node pkg="rwrc21_recogni_localizer" type="tf_broadcaster_node" name="tf_broadcaster_node" >
 		<param name="is_odom_tf" value="false" />
@@ -57,5 +57,5 @@
 
 	<!-- rviz -->
 	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find rwrc21_recogni_localizer)/config/rviz/dkan.rviz" />
-	
+
 </launch>
