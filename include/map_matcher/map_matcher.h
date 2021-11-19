@@ -44,7 +44,7 @@ private:
  	void init_map();
 	void read_map();
 
-	void set_pcl(pcl::PointCloud<pcl::PointXYZI>::Ptr input_pcl,pcl::PointCloud<pcl::PointXYZI>::Ptr& output_pcl,double x,double y);
+	void set_pcl(pcl::PointCloud<pcl::PointXYZI>::Ptr input_pcl,pcl::PointCloud<pcl::PointXYZI>::Ptr& output_pcl,double x,double y,double z);
 	void downsample_pcl(pcl::PointCloud<pcl::PointXYZI>::Ptr input_pcl,pcl::PointCloud<pcl::PointXYZI>::Ptr& output_pcl,double voxel_size);
 	void matching(pcl::PointCloud<pcl::PointXYZI>::Ptr map_pcl,pcl::PointCloud<pcl::PointXYZI>::Ptr local_pcl);
 
