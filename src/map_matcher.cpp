@@ -100,7 +100,7 @@ void MapMatcher::map_callback(const sensor_msgs::PointCloud2ConstPtr& msg)
 
 void MapMatcher::init_map() { map_pcl_->clear(); }
 
-void MapMatcher::set_pcl(pcl::PointCloud<pcl::PointXYZI>::Ptr input_pcl,pcl::PointCloud<pcl::PointXYZI>::Ptr& output_pcl,double x,double y)
+void MapMatcher::set_pcl(pcl::PointCloud<pcl::PointXYZI>::Ptr input_pcl,pcl::PointCloud<pcl::PointXYZI>::Ptr& output_pcl,double x,double y,double z)
 {
 	output_pcl->clear();
 	
@@ -113,6 +113,12 @@ void MapMatcher::set_pcl(pcl::PointCloud<pcl::PointXYZI>::Ptr input_pcl,pcl::Poi
 	pass.setFilterFieldName("y");
 	pass.setFilterLimits(-LIMIT_RANGE_ + y,LIMIT_RANGE_ + y);
 	pass.filter(*output_pcl);
+
+	pass.setInputCloud(output_pcl);
+	pass.setFilterFieldName("z");
+	pass.setFilterLimits(-15 + z,15 + z);
+	pass.filter(*output_pcl);
+
 }
 
 void MapMatcher::read_map()
@@ -169,8 +175,8 @@ void MapMatcher::matching(pcl::PointCloud<pcl::PointXYZI>::Ptr map_pcl,pcl::Poin
 	// passthrough
 	pcl::PointCloud<pcl::PointXYZI>::Ptr map_local_pcl(new pcl::PointCloud<pcl::PointXYZI>);
 	pcl::PointCloud<pcl::PointXYZI>::Ptr current_local_pcl(new pcl::PointCloud<pcl::PointXYZI>);
-	set_pcl(map_pcl_,map_local_pcl,ekf_pose_.pose.position.x,ekf_pose_.pose.position.y);
-	set_pcl(current_pcl_,current_local_pcl,0.0,0.0);
+	set_pcl(map_pcl_,map_local_pcl,ekf_pose_.pose.position.x,ekf_pose_.pose.position.y,ekf_pose_.pose.position.z);
+	set_pcl(current_pcl_,current_local_pcl,0.0,0.0,0.0);
 
 	// initialize
 	//Eigen::AngleAxisf init_rotation(msg_to_quat_eigen(ekf_pose_.pose.orientation));
