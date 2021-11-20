@@ -143,8 +143,9 @@ void EKF::motion_update_3DoF(double dt)
 {
 	double nu = 0.9*odom_.twist.twist.linear.x;
 	double omega = imu_.angular_velocity.z;
+	//double omega = odom_.twist.twist.angular.z;
 
-	//if(omega < 1e-3) omega = 0.0;
+	if(std::fabs(omega) < 1e-3) omega = 1e-10;
 
 	// M
 	Eigen::MatrixXd M(X_.size() - 1,X_.size() - 1);
@@ -182,7 +183,6 @@ void EKF::motion_update_3DoF(double dt)
 		X_(2) += omega*dt;
 	}
 	
-
 	/*
 	X_(0) += nu*std::cos(X_(2))*dt;
 	X_(1) += nu*std::sin(X_(2))*dt;
@@ -491,7 +491,7 @@ void EKF::process()
 				is_respawn_ = false;
 			}
 			else{
-				motion_update(dt);
+				motion_update(1.0/(double)10);
 				if(has_received_ndt_pose_) measurement_update();
 				//if(has_received_ndt_pose_ && !is_measurement_.data) measurement_update();
 				publish_ekf_pose();
