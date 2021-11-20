@@ -41,8 +41,8 @@
 
 	<!-- map_matcher -->
 	<node pkg="rwrc21_recogni_localizer" type="map_matcher_node" name="map_matcher_node" output="screen" >
-		<!--<param name="pcd_file_path" value="/home/amsl/pcd_data/tsukuba/rwrc21_tsukuba.pcd" /> -->
-		<param name="pcd_file_path" value="/home/amsl/pcd/tsukuba/map_tc19_o085_f-04_t05.pcd" />
+		<param name="pcd_file_path" value="/home/amsl/pcd_data/tsukuba/map_tc.pcd" /> 
+		<!--<param name="pcd_file_path" value="/home/amsl/pcd/tsukuba/map_tc19_o085_f-04_t05.pcd" />-->
 		<param name="pc_topic_name" value="$(arg velodyne_topic_name)" />
 		<param name="orb_pc_topic_name" value="" />
 		<param name="ekf_pose_topic_name" value="$(arg ekf_pose_topic_name)" />

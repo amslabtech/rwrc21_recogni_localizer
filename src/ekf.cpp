@@ -141,7 +141,7 @@ void EKF::calc_rpy_from_quat(geometry_msgs::Quaternion q,double& roll,double& pi
 
 void EKF::motion_update_3DoF(double dt)
 {
-	double nu = 1.0*odom_.twist.twist.linear.x;
+	double nu = 0.9*odom_.twist.twist.linear.x;
 	double omega = imu_.angular_velocity.z;
 	//double omega = odom_.twist.twist.angular.z;
 
@@ -293,7 +293,7 @@ void EKF::measurement_update_3DoF()
 	Eigen::MatrixXd K(X_.size(),X_.size());
 	K = P_*H.transpose()*S.inverse();
 
-	X_ += 2.0*K*Y;
+	X_ += 1.0*K*Y;
 	P_ = (I - K*H)*P_;
 }
 
@@ -491,7 +491,7 @@ void EKF::process()
 				is_respawn_ = false;
 			}
 			else{
-				motion_update(dt);
+				motion_update(1.0/(double)10);
 				if(has_received_ndt_pose_) measurement_update();
 				//if(has_received_ndt_pose_ && !is_measurement_.data) measurement_update();
 				publish_ekf_pose();
