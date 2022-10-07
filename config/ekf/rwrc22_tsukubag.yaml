@@ -5,7 +5,7 @@ INIT_Y: 0.0
 INIT_Z: 0.0
 INIT_ROLL: 0.0
 INIT_PITCH: 0.0
-INIT_YAW: 3.00
+INIT_YAW: -3.00
 
 # Parameters (0.001 < imu < ?, 0.03 < odom < ?)
 INIT_SIGMA: 0.000001
