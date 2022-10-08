@@ -1,11 +1,11 @@
 # Init pose (x = -3.5, y = 0.0, yaw = 3.0)
 # 18 (x = 42, y = 31.0 yaw = 0.5)
-INIT_X: 6.5
-INIT_Y: 0.4
+INIT_X: 0.0
+INIT_Y: 0.0
 INIT_Z: 0.0
 INIT_ROLL: 0.0
 INIT_PITCH: 0.0
-INIT_YAW: -3.00
+INIT_YAW: 3.14
 
 # Parameters (0.001 < imu < ?, 0.03 < odom < ?)
 INIT_SIGMA: 0.000001

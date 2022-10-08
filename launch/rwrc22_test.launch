@@ -41,7 +41,8 @@
 
 	<!-- map_matcher -->
 	<node pkg="rwrc21_recogni_localizer" type="map_matcher_node" name="map_matcher_node" output="screen" >
-        <param name="pcd_file_path" value="/home/amsl/pcd/tsukuba/map_tc.pcd" />
+        <param name="pcd_file_path" value="/home/amsl/catkin_ws/src/rwrc22/map/pcd/map_tc.pcd" />
+        <!-- <param name="pcd_file_path" value="/home/amsl/pcd/tsukuba/map_tc.pcd" /> -->
 		<param name="pc_topic_name" value="$(arg velodyne_topic_name)" />
 		<param name="orb_pc_topic_name" value="" />
 		<param name="ekf_pose_topic_name" value="$(arg ekf_pose_topic_name)" />
@@ -54,7 +55,7 @@
 		<rosparam command="load" file="$(find rwrc21_recogni_localizer)/config/map_matcher/rwrc22_tsukubag.yaml" />
 	</node>
     <include file="$(find velodyne_pointcloud)/launch/VLP-32C_points.launch"/>
-    <node pkg="pcl_ros" type="pcd_to_pointcloud" name="pcd_to_pointcloud" args="/home/amsl/pcd/tsukuba/map_tc.pcd" output="log">
+    <node pkg="pcl_ros" type="pcd_to_pointcloud" name="pcd_to_pointcloud" args="/home/amsl/catkin_ws/src/rwrc22/map/pcd/map_tc.pcd" output="log">
         <param name="interval" value="0" />
         <remap from="cloud_pcd" to="mapcloud" />
     </node>

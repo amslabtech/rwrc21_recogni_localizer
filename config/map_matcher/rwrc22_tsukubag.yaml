@@ -1,5 +1,5 @@
 # Downsampling Parameter (0.30?)
-VOXEL_SIZE: 1.0
+VOXEL_SIZE: 0.5
 
 # Paththrough Parameter (60.0)
 LIMIT_RANGE: 60.0
@@ -12,7 +12,7 @@ RESOLUTION: 5.0
 MAX_ITERATION: 35
 
 # Matching Score
-MATCHING_SCORE_TH: 2.7
+MATCHING_SCORE_TH: 3.0 #2.7
 
 # Map Offset (x = 515.480289, y = -267.639866)
 MAP_OFFSET_X: 8.78
