@@ -4,7 +4,8 @@
 #include <ros/ros.h>
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/Imu.h>
-#include <geometry_msgs/PoseStamped.h>
+// #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/PoseWithCovariance.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
@@ -23,21 +24,21 @@ private:
 	void ndt_pose_callback(const geometry_msgs::PoseStampedConstPtr& msg);
 	void odom_callback(const nav_msgs::OdometryConstPtr& msg);
 	void imu_callback(const sensor_msgs::ImuConstPtr& msg);
-	
+
 	void measurement_callback(const std_msgs::BoolConstPtr& msg);
 	void respawn_pose_callback(const geometry_msgs::PoseStampedConstPtr& msg);
 
 	void initialize(double x,double y,double z,double roll,double pitch,double yaw);
 	void set_pose(double x,double y,double z,double roll,double pitch,double yaw);
 	void calc_rpy_from_quat(geometry_msgs::Quaternion q,double& roll,double& pitch,double& yaw);
-	
+
 	void motion_update_3DoF(double dt);
 	void motion_update_6DoF(double dt);
 	void motion_update(double dt);
 	void measurement_update();
 	void measurement_update_3DoF();
 	void measurement_update_6DoF();
-	
+
 	void respawn();
 
 	void publish_ekf_pose();
@@ -65,7 +66,9 @@ private:
 
 	nav_msgs::Odometry odom_;
 	geometry_msgs::PoseStamped ndt_pose_;
-	geometry_msgs::PoseStamped ekf_pose_;
+	// geometry_msgs::PoseStamped ekf_pose_;
+    geometry_msgs::PoseWithCovarianceStamped ekf_pose_;
+
 	sensor_msgs::Imu imu_;
 	ros::Time now_time_;
 	ros::Time last_time_;

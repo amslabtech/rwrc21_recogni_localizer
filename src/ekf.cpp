@@ -36,7 +36,8 @@ EKF::EKF() :
 	ndt_pose_sub_ = nh_.subscribe(ndt_pose_topic_name_,10,&EKF::ndt_pose_callback,this);
 	imu_sub_ = nh_.subscribe(imu_topic_name_,10,&EKF::imu_callback,this);
 	odom_sub_ = nh_.subscribe(odom_topic_name_,10,&EKF::odom_callback,this);
-	ekf_pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>(ekf_pose_topic_name_,10);
+	// ekf_pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>(ekf_pose_topic_name_,10);
+	ekf_pose_pub_ = nh_.advertise<geometry_msgs::PoseWithCovarianceStamped>(ekf_pose_topic_name_,10);
 
 	//measurement_sub_ = nh_.subscribe(measurement_topic_name_,10,&EKF::measurement_callback,this);
 	respawn_pose_sub_ = nh_.subscribe(respawn_pose_topic_name_,10,&EKF::respawn_pose_callback,this);
@@ -182,7 +183,7 @@ void EKF::motion_update_3DoF(double dt)
 		X_(1) += nu/omega*(-std::cos(X_(2) + omega*dt) + std::cos(X_(2)));
 		X_(2) += omega*dt;
 	}
-	
+
 	/*
 	X_(0) += nu*std::cos(X_(2))*dt;
 	X_(1) += nu*std::sin(X_(2))*dt;
@@ -340,10 +341,10 @@ void EKF::measurement_update()
 
 void EKF::respawn()
 {
-	ekf_pose_.pose.position.x = respawn_pose_.pose.position.x;
-	ekf_pose_.pose.position.y = respawn_pose_.pose.position.y;
-	ekf_pose_.pose.position.z = ndt_pose_.pose.position.z;
-	ekf_pose_.pose.orientation = ndt_pose_.pose.orientation;
+	ekf_pose_.pose.pose.position.x = respawn_pose_.pose.position.x;
+	ekf_pose_.pose.pose.position.y = respawn_pose_.pose.position.y;
+	ekf_pose_.pose.pose.position.z = ndt_pose_.pose.position.z;
+	ekf_pose_.pose.pose.orientation = ndt_pose_.pose.orientation;
 	ekf_pose_.header.frame_id = map_frame_id_;
 	X_(0) = respawn_pose_.pose.position.x;
 	X_(1) = respawn_pose_.pose.position.y;
@@ -353,12 +354,12 @@ void EKF::respawn()
 void EKF::publish_ekf_pose()
 {
 	ekf_pose_.header.frame_id = map_frame_id_;
-	ekf_pose_.pose.position.x = X_(0);
-	ekf_pose_.pose.position.y = X_(1);
+	ekf_pose_.pose.pose.position.x = X_(0);
+	ekf_pose_.pose.pose.position.y = X_(1);
 	if(is_3DoF_){
-		ekf_pose_.pose.position.z = ndt_pose_.pose.position.z;
+		ekf_pose_.pose.pose.position.z = ndt_pose_.pose.position.z;
 		//ekf_pose_.pose.position.z = 0.0;
-		ekf_pose_.pose.orientation = rpy_to_msg(0.0,0.0,X_(2));
+		ekf_pose_.pose.pose.orientation = rpy_to_msg(0.0,0.0,X_(2));
 
 
 		std::cout << "EKF POSE: " << std::endl;
@@ -369,8 +370,8 @@ void EKF::publish_ekf_pose()
 
 	}
 	else{
-		ekf_pose_.pose.position.z = X_(2);
-		ekf_pose_.pose.orientation = rpy_to_msg(X_(3),X_(4),X_(5));
+		ekf_pose_.pose.pose.position.z = X_(2);
+		ekf_pose_.pose.pose.orientation = rpy_to_msg(X_(3),X_(4),X_(5));
 
 		std::cout << "EKF POSE: " << std::endl;
 		std::cout << "  X   : " << X_(0) << std::endl;
@@ -484,8 +485,8 @@ void EKF::process()
 				is_first_ = false;
 			}
 			else dt = now_time_.toSec() - last_time_.toSec();
-			
-			
+
+
 			if(is_respawn_){
 				respawn();
 				is_respawn_ = false;

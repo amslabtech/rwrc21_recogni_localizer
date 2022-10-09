@@ -37,7 +37,7 @@ public:
 private:
 	void pc_callback(const sensor_msgs::PointCloud2ConstPtr& msg);
 	void orb_pc_callback(const sensor_msgs::PointCloud2ConstPtr& msg);
-	void ekf_pose_callback(const geometry_msgs::PoseStampedConstPtr& msg);
+	void ekf_pose_callback(const geometry_msgs::PoseWithCovarianceStampedConstPtr& msg);
 	void map_callback(const sensor_msgs::PointCloud2ConstPtr& msg);
 
 
@@ -72,7 +72,7 @@ private:
 
 	sensor_msgs::PointCloud2 pc_;
 	sensor_msgs::PointCloud2 orb_pc_;
-	geometry_msgs::PoseStamped ekf_pose_;
+	geometry_msgs::PoseWithCovarianceStamped ekf_pose_;
 	ros::Time pc_time_;
 	bool is_reset_;
 	bool is_start_;

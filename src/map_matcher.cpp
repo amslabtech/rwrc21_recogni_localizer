@@ -1,6 +1,6 @@
 #include "map_matcher/map_matcher.h"
 
-MapMatcher::MapMatcher() : 
+MapMatcher::MapMatcher() :
 	private_nh_("~"),
 	map_pcl_(new pcl::PointCloud<pcl::PointXYZI>),
 	current_pcl_(new pcl::PointCloud<pcl::PointXYZI>),
@@ -70,7 +70,7 @@ void MapMatcher::pc_callback(const sensor_msgs::PointCloud2ConstPtr& msg)
 		catch(tf2::TransformException& ex){
 			ROS_WARN("%s", ex.what());
 			return;
-		}	
+		}
 		Eigen::Matrix4f transform = tf2::transformToEigen(transform_stamped.transform).matrix().cast<float>();
 		pcl::transformPointCloud(*current_pcl_,*current_pcl_,transform);
 	}
@@ -85,7 +85,12 @@ void MapMatcher::orb_pc_callback(const sensor_msgs::PointCloud2ConstPtr& msg)
 }
 */
 
-void MapMatcher::ekf_pose_callback(const geometry_msgs::PoseStampedConstPtr& msg)
+// void MapMatcher::ekf_pose_callback(const geometry_msgs::PoseStampedConstPtr& msg)
+// {
+// 	ekf_pose_ = *msg;
+// 	has_received_ekf_pose_ = true;
+// }
+void MapMatcher::ekf_pose_callback(const geometry_msgs::PoseWithCovarianceStampedConstPtr& msg)
 {
 	ekf_pose_ = *msg;
 	has_received_ekf_pose_ = true;
@@ -103,7 +108,7 @@ void MapMatcher::init_map() { map_pcl_->clear(); }
 void MapMatcher::set_pcl(pcl::PointCloud<pcl::PointXYZI>::Ptr input_pcl,pcl::PointCloud<pcl::PointXYZI>::Ptr& output_pcl,double x,double y,double z)
 {
 	output_pcl->clear();
-	
+
 	pcl::PassThrough<pcl::PointXYZI> pass;
 	pass.setInputCloud(input_pcl);
 	pass.setFilterFieldName("x");
@@ -175,13 +180,13 @@ void MapMatcher::matching(pcl::PointCloud<pcl::PointXYZI>::Ptr map_pcl,pcl::Poin
 	// passthrough
 	pcl::PointCloud<pcl::PointXYZI>::Ptr map_local_pcl(new pcl::PointCloud<pcl::PointXYZI>);
 	pcl::PointCloud<pcl::PointXYZI>::Ptr current_local_pcl(new pcl::PointCloud<pcl::PointXYZI>);
-	set_pcl(map_pcl_,map_local_pcl,ekf_pose_.pose.position.x,ekf_pose_.pose.position.y,ekf_pose_.pose.position.z);
+	set_pcl(map_pcl_,map_local_pcl,ekf_pose_.pose.pose.position.x,ekf_pose_.pose.pose.position.y,ekf_pose_.pose.pose.position.z);
 	set_pcl(current_pcl_,current_local_pcl,0.0,0.0,0.0);
 
 	// initialize
 	//Eigen::AngleAxisf init_rotation(msg_to_quat_eigen(ekf_pose_.pose.orientation));
-	Eigen::AngleAxisf init_rotation((float)get_yaw_from_quat(ekf_pose_.pose.orientation),Eigen::Vector3f::UnitZ());
-	Eigen::Translation3f init_translation((float)ekf_pose_.pose.position.x,(float)ekf_pose_.pose.position.y,(float)ekf_pose_.pose.position.z);
+	Eigen::AngleAxisf init_rotation((float)get_yaw_from_quat(ekf_pose_.pose.pose.orientation),Eigen::Vector3f::UnitZ());
+	Eigen::Translation3f init_translation((float)ekf_pose_.pose.pose.position.x,(float)ekf_pose_.pose.pose.position.y,(float)ekf_pose_.pose.pose.position.z);
 	Eigen::Matrix4f init_guess = (init_translation*init_rotation).matrix();
 
 	// align
@@ -213,7 +218,7 @@ void MapMatcher::matching(pcl::PointCloud<pcl::PointXYZI>::Ptr map_pcl,pcl::Poin
 	std::cout << std::endl;
 
 	if(ndt.getFitnessScore() <= MATCHING_SCORE_TH_){
-		Eigen::Matrix4f translation = ndt.getFinalTransformation();	
+		Eigen::Matrix4f translation = ndt.getFinalTransformation();
 		Eigen::Quaternionf quaternion(Eigen::Matrix3f(translation.block(0,0,3,3)));
 		quaternion.normalize();
 
